@@ -89,16 +89,29 @@ WSGI_APPLICATION = 'mpis.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 
-
+# production database
 DATABASES = {
     'default': {
     'ENGINE':'django.db.backends.mysql',
     'NAME': 'skw',
     'USER':'root',
-    'PASSWORD':'n1Mech0k@',
-    'HOST':'127.0.0.1',
+    'PASSWORD':'y4c@pt@2021',
+    'HOST':'45.56.115.113',
     'PORT':'3306',
     }
+
+}
+
+# local database
+# DATABASES = {
+#     'default': {
+#     'ENGINE':'django.db.backends.mysql',
+#     'NAME': 'skw',
+#     'USER':'root',
+#     'PASSWORD':'n1Mech0k@',
+#     'HOST':'127.0.0.1',
+#     'PORT':'3306',
+#     }
 
 }
 
