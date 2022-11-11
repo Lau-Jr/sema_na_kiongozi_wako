@@ -117,3 +117,8 @@ def get_feedback(request, uname):
 class CreateListUserAPIView(ListCreateAPIView):
     queryset = models.User.objects.all()
     serializer_class = serializers.RegistrationSerializer
+
+
+class CreateMbugeAPIView(ListCreateAPIView):
+    queryset = models.Mbunge.objects.all()
+    serializer_class = serializers.MbugeSerializer

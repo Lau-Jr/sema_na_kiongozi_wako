@@ -53,3 +53,10 @@ class MikoaSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Jimbo
         fields = ['mkoa', 'id']
+
+
+class MbugeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Mbunge
+        fields = '__all__'
