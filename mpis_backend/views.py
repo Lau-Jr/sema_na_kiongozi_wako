@@ -61,6 +61,13 @@ def reply(request, pk):
     return render(request, 'mpis_backend/reply.html', context)
 
 
+
+
+
+
+
+
+
 def maoni(request):
     maoni_obj = Maoni.objects.filter(status=False)
     context = {'maoni': maoni_obj}

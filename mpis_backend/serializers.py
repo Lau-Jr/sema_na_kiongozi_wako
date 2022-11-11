@@ -6,3 +6,4 @@ class MajimboSerializer(serializers.ModelSerializer):
     class Meta:
         model = Jimbo
         fields = ['jina_la_jimbo', ]
+

@@ -1,8 +1,7 @@
 from django.urls import path, include
-from mpis_backend.views import SektaListView,  maoni, reply, send_message, upload_data_from_file,upload_data_sekta
+from mpis_backend.views import SektaListView, maoni, reply, send_message, upload_data_from_file, upload_data_sekta
 from django.conf import settings
 from django.conf.urls.static import static
-
 
 app_name = 'mpis_backend'
 urlpatterns = [

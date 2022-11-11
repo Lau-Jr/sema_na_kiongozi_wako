@@ -1,7 +1,7 @@
 from mpis_backend.api import serializers
 from rest_framework.generics import ListCreateAPIView, RetrieveAPIView, ListAPIView
 from mpis_backend import models
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from mpis_backend.api import utils
 
 
@@ -91,9 +91,22 @@ class JimboListAPIView(ListAPIView):
 
 #     def get(self, request, *args, **kwargs):
 #         queryset = self.queryset.values_list('mkoa', flat=True).distinct()
-        # in future consider using distinct on field MSSQL SERVER
-        # models.Jimbo.objects.all().values_list('mkoa','id').distinct('mkoa')
-        # serializer = serializers.MikoaSerializer(queryset, many=True)
-        # mikoa = utils.get_mikoa(queryset)
-        # result = {'mikoa': mikoa}
-        # return JsonResponse(result)
+# in future consider using distinct on field MSSQL SERVER
+# models.Jimbo.objects.all().values_list('mkoa','id').distinct('mkoa')
+# serializer = serializers.MikoaSerializer(queryset, many=True)
+# mikoa = utils.get_mikoa(queryset)
+# result = {'mikoa': mikoa}
+# return JsonResponse(result)
+
+def get_feedback(request, uname):
+    try:
+        user = models.User.objects.get(username=uname)
+    except models.User.DoesNotExist:
+        result = {'error': 'username does not exist'}
+        return JsonResponse(result)
+    mbunge = models.Mbunge.objects.get(user=user)
+    jimbo = mbunge.jimbo_id
+    maoni = models.Maoni.objects.filter(jimbo=jimbo)
+    serializer = serializers.MaoniSerializer(maoni, many=True)
+    print(serializer.data)
+    return JsonResponse(serializer.data, safe=False)
