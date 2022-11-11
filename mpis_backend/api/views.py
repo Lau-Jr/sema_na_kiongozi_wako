@@ -3,6 +3,7 @@ from rest_framework.generics import ListCreateAPIView, RetrieveAPIView, ListAPIV
 from mpis_backend import models
 from django.http import JsonResponse, HttpResponse
 from mpis_backend.api import utils
+from rest_framework.decorators import api_view
 
 
 class CreateMaoniAPIView(ListCreateAPIView):
@@ -86,27 +87,33 @@ class JimboListAPIView(ListAPIView):
         return JsonResponse(result)
 
 
-# class MkoaListAPIView(ListAPIView):
-#     queryset = models.Jimbo.objects.all()
-
-#     def get(self, request, *args, **kwargs):
-#         queryset = self.queryset.values_list('mkoa', flat=True).distinct()
-# in future consider using distinct on field MSSQL SERVER
-# models.Jimbo.objects.all().values_list('mkoa','id').distinct('mkoa')
-# serializer = serializers.MikoaSerializer(queryset, many=True)
-# mikoa = utils.get_mikoa(queryset)
-# result = {'mikoa': mikoa}
-# return JsonResponse(result)
-
 def get_feedback(request, uname):
-    try:
-        user = models.User.objects.get(username=uname)
-    except models.User.DoesNotExist:
-        result = {'error': 'username does not exist'}
+    # print(request.method)
+    if request.method == 'GET':
+        try:
+            user = models.User.objects.get(username=uname)
+        except models.User.DoesNotExist:
+            result = {'error': 'username does not exist'}
+            return JsonResponse(result)
+        mbunge = models.Mbunge.objects.get(user=user)
+        jimbo = mbunge.jimbo_id
+        maoni = models.Maoni.objects.filter(jimbo=jimbo)
+        serializer = serializers.MaoniSerializer(maoni, many=True)
+        return JsonResponse(serializer.data, safe=False)
+    else:
+        result = {'error': 'send get request'}
         return JsonResponse(result)
-    mbunge = models.Mbunge.objects.get(user=user)
-    jimbo = mbunge.jimbo_id
-    maoni = models.Maoni.objects.filter(jimbo=jimbo)
-    serializer = serializers.MaoniSerializer(maoni, many=True)
-    print(serializer.data)
-    return JsonResponse(serializer.data, safe=False)
+
+
+# @api_view(['POST', 'GET'])
+# def create_user(request):
+#     if request.method == 'POST':
+#         print(request.data['username'])
+#         print(request.data['passwd1'])
+#         print(request.data['passwd2'])
+#         return HttpResponse('thanks')
+
+
+class CreateListUserAPIView(ListCreateAPIView):
+    queryset = models.User.objects.all()
+    serializer_class = serializers.RegistrationSerializer

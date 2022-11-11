@@ -10,7 +10,9 @@ class Maoni(models.Model):
         ('2', "2"),
         ('3', "3")
     ]
-
+    # ('sifa', "sifa"),1
+    # ('kosolewa', "sifa"),2
+    # ('pendekezo', "pendekezo")3
     phone_number = models.CharField(max_length=100)
     status = models.BooleanField(default=False)
     category = models.CharField(
