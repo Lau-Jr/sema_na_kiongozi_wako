@@ -122,3 +122,13 @@ class CreateListUserAPIView(ListCreateAPIView):
 class CreateMbugeAPIView(ListCreateAPIView):
     queryset = models.Mbunge.objects.all()
     serializer_class = serializers.MbugeSerializer
+
+
+@api_view(['GET'])
+def get_regions(request):
+    if request.method == 'GET':
+        regions = set(models.Jimbo.objects.values_list('mkoa', flat=True))
+        result = {'regions': list(regions)}
+        return JsonResponse(result)
+    else:
+        pass

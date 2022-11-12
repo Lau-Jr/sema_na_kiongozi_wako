@@ -29,7 +29,6 @@ class Maoni(models.Model):
     class Meta:
         verbose_name_plural = 'maoni'
 
-
 class Sekta(models.Model):
     jina = models.CharField(max_length=30)
 
