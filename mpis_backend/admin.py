@@ -7,9 +7,9 @@ from .models import *
 
 @admin.register(Jimbo)
 class JimboAdmin(admin.ModelAdmin):
-    list_display = ('jina_la_jimbo', 'mkoa', 'id')
+    list_display = ('jina_la_jimbo', 'mkoa')
     search_fields = ['jina_la_jimbo']
-    ordering = ['id']
+    ordering = ['jina_la_jimbo']
 
 
 @admin.register(Sekta)

@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+
 # Create your models here.
 
 
@@ -29,8 +30,9 @@ class Maoni(models.Model):
     class Meta:
         verbose_name_plural = 'maoni'
 
+
 class Sekta(models.Model):
-    jina = models.CharField(max_length=30)
+    jina = models.CharField(max_length=30, primary_key=True)
 
     def __str__(self):
         return self.jina
@@ -38,6 +40,7 @@ class Sekta(models.Model):
 
 class User(AbstractUser):
     is_admin = models.BooleanField(default=False)
+    # username = models.CharField(primary_key=True, max_length=50)
 
 
 class Jimbo(models.Model):
@@ -61,3 +64,15 @@ class Mbunge(models.Model):
 
     def __str__(self):
         return f'RC wa {self.jimbo}'
+
+
+class RC(models.Model):
+    region = models.CharField(max_length=30, null=False)
+    user = models.OneToOneField(
+        "User", verbose_name=("user"), on_delete=models.CASCADE)
+
+    # class Meta:
+    #     db_table = 'RC'
+
+    def __str__(self):
+        return f'RC wa {self.region}'
