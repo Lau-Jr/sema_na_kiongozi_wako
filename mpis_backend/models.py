@@ -32,7 +32,7 @@ class Maoni(models.Model):
 
 
 class Sekta(models.Model):
-    jina = models.CharField(max_length=30, primary_key=True)
+    jina = models.CharField(max_length=30)
 
     def __str__(self):
         return self.jina
