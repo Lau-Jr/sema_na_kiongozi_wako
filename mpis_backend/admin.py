@@ -17,6 +17,11 @@ class SektaAdmin(admin.ModelAdmin):
     pass
 
 
+@admin.register(RC)
+class RCAdmin(admin.ModelAdmin):
+    pass
+
+
 @admin.register(Maoni)
 class MaoniAdmin(admin.ModelAdmin):
     list_display = ['maoni', 'status']
@@ -31,15 +36,15 @@ class MbungeAdmin(admin.ModelAdmin):
 class UserAdmin(BaseUserAdmin):
     add_form = UserCreationForm
 
-    list_display = ('username', )
+    list_display = ('username',)
     list_filter = ('is_admin',)
 
     fieldsets = (
-        (None, {'fields': ('username',  'password')}),
+        (None, {'fields': ('username', 'password')}),
         ('Permissions', {'fields': ('is_admin',)})
     )
     search_fields = ('username',)
-    ordering = ('username', )
+    ordering = ('username',)
 
     filter_horizontal = ()
 
