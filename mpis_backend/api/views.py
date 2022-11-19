@@ -1,4 +1,5 @@
 from rest_framework import status
+from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 
 from mpis_backend.api import serializers
@@ -8,6 +9,8 @@ from django.http import JsonResponse, HttpResponse
 from mpis_backend.api import utils
 from rest_framework.decorators import api_view
 from django.core.exceptions import ValidationError
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
 
 
 class CreateMaoniAPIView(ListCreateAPIView):
@@ -118,16 +121,6 @@ def get_feedback(request, uname):
 #         return HttpResponse('thanks')
 
 
-class CreateListUserAPIView(ListCreateAPIView):
-    queryset = models.User.objects.all()
-    serializer_class = serializers.RegistrationSerializer
-
-
-class CreateMbugeAPIView(ListCreateAPIView):
-    queryset = models.Mbunge.objects.all()
-    serializer_class = serializers.MbugeSerializer
-
-
 @api_view(['GET'])
 def get_regions(request):
     if request.method == 'GET':
@@ -138,77 +131,21 @@ def get_regions(request):
         pass
 
 
-@api_view(["POST"])
-def create_rc(request):
-    result = '''
-    make sure you have included the following fields
-    'username:'
-    'password:' 
-    'password2:'
-    'region:' 
-    '''
-    if request.method == 'POST':
-        data = request.data
-        print(data)
-        if is_valid_rc(data):
-            try:
-                rc = save(data)
-            except ValidationError as error:
-                result = error
-                print(result)
-                print(result.messages)
-                return JsonResponse(data=result.messages, safe=False)
-            return rc
-        else:
-            print(result)
-            return JsonResponse(data=result, safe=False)
-    else:
-        print(result)
+class CreateRegionCommissioner(APIView):
+    # permission_classes = (IsAuthenticated,)
+    # def get(self, request):
+    #     pass
 
-
-def is_valid_rc(data):
-    valid = True
-    username = data.get('username', 1)
-    password = data.get('password', 1)
-    password2 = data.get('password2', 1)
-    region = data.get('region', 1)
-    if username == 1 or password == 1 or password2 == 1 or region == 1:
-        valid = False
-        print(username, password, password2, region)
-        print('invalid data')
-        return valid
-    else:
-        print('data is valid')
-        return valid
-
-
-def save(validated_data):
-    regions_from_db = set(models.Jimbo.objects.values_list('mkoa', flat=True))
-    password = validated_data['password']
-    password2 = validated_data['password2']
-    region = validated_data['region']
-    username = validated_data['username']
-    user = models.User(username=username)
-    if password != password2:
-        raise ValidationError({"password": "Passwords must match."})
-    user.set_password(password)
-    user.save()
-    if region not in regions_from_db:
-        raise ValidationError({'region': 'region not found'})
-    rc = models.RC(region=region, user=user)
-    rc.save()
-    return HttpResponse('RC is created successful', status=201)
-
-
-@api_view(["POST"])
-def create_region_commissioner(request):
-    if request.method == 'POST':
+    def post(self, request):
         data = request.data
         print(data)
         rc_serializer = serializers.UserSerializer(data=data)
         if rc_serializer.is_valid():
             rc_serializer.save()
-            return Response(rc_serializer.errors, status=status.HTTP_201_CREATED)
+            uid = models.User.objects.get(username=data['username'])
+            generated_token = Token.objects.get(user_id=uid)
+            content = {
+                'generated_token': generated_token.key
+            }
+            return Response(content, status=status.HTTP_201_CREATED)
         return Response(rc_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    else:
-        pass

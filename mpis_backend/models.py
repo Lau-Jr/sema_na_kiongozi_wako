@@ -40,7 +40,6 @@ class Sekta(models.Model):
 
 class User(AbstractUser):
     is_admin = models.BooleanField(default=False)
-    # username = models.CharField(primary_key=True, max_length=50)
 
 
 class Jimbo(models.Model):
@@ -54,16 +53,6 @@ class Jimbo(models.Model):
 
     def __str__(self):
         return self.jina_la_jimbo
-
-
-class Mbunge(models.Model):
-    user = models.OneToOneField(
-        "User", verbose_name=("user"), on_delete=models.CASCADE)
-    jimbo = models.OneToOneField(
-        'Jimbo', related_name='mbunge', on_delete=models.CASCADE, blank=False, null=False)
-
-    def __str__(self):
-        return f'RC wa {self.jimbo}'
 
 
 class RC(models.Model):

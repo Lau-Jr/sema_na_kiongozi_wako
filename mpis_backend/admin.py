@@ -28,11 +28,6 @@ class MaoniAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(Mbunge)
-class MbungeAdmin(admin.ModelAdmin):
-    pass
-
-
 class UserAdmin(BaseUserAdmin):
     add_form = UserCreationForm
 

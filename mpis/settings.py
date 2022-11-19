@@ -15,12 +15,12 @@ import os
 import django_heroku
 import dj_database_url
 import dotenv
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 dotenv_file = os.path.join(BASE_DIR, ".env")
 if os.path.isfile(dotenv_file):
     dotenv.load_dotenv(dotenv_file)
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
@@ -32,7 +32,6 @@ SECRET_KEY = 'django-insecure-ko$tyk@ac&o%b)!3f)1(v%!y#v1!_xiof_)&=o5*gk6-8!nztt
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-
 
 # Application definition
 
@@ -49,7 +48,8 @@ INSTALLED_APPS = [
 
     # third part apps
     'rest_framework',
-    'crispy_forms'
+    'crispy_forms',
+    'rest_framework.authtoken',
 
 ]
 
@@ -84,34 +84,33 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'mpis.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 
 # production database
-DATABASES = {
-    'default': {
-    'ENGINE':'django.db.backends.mysql',
-    'NAME': 'skw',
-    'USER':'root',
-    'PASSWORD':'y4c@pt@2021',
-    'HOST':'45.56.115.113',
-    'PORT':'3306',
-    }
-}
-
-# local database
 # DATABASES = {
 #     'default': {
 #     'ENGINE':'django.db.backends.mysql',
 #     'NAME': 'skw',
 #     'USER':'root',
-#     'PASSWORD':'n1Mech0k@',
-#     'HOST':'127.0.0.1',
+#     'PASSWORD':'y4c@pt@2021',
+#     'HOST':'45.56.115.113',
 #     'PORT':'3306',
 #     }
 # }
+
+# local database
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'new_skw',
+        'USER': 'root',
+        'PASSWORD': 'n1Mech0k@',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+    }
+}
 
 # DATABASES = {
 #     'default': {
@@ -138,7 +137,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
@@ -151,7 +149,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
@@ -166,9 +163,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
 AUTH_USER_MODEL = 'mpis_backend.User'
-
 
 # rest framework
 REST_FRAMEWORK = {
@@ -177,8 +172,16 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
     ],
-    'DEFAULT_AUTHENTICATION_CLASSES': ['rest_framework.authentication.SessionAuthentication', ]
+    'DEFAULT_AUTHENTICATION_CLASSES': ['rest_framework.authentication.TokenAuthentication', ]
 }
+
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': [
+#         'rest_framework.authentication.TokenAuthentication',  # <-- And here
+#     ],
+# }
+
+
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/login/'
 LOGOUT_REDIRECT_URL = '/'
