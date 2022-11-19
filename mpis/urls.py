@@ -18,6 +18,7 @@ from django.urls import path, include
 from .views import ListOrCreateJimbo
 from mpis_backend.views import HomeView
 from mpis_backend.views import LoginView, LogoutView
+from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
@@ -29,4 +30,5 @@ urlpatterns = [
     path('login/', LoginView.as_view(), name='login'),
     path('', HomeView.as_view(), name='home'),
     path('logout/', LogoutView.as_view(), name='logout'),
+    path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
 ]
