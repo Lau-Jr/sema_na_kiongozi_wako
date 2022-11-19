@@ -102,9 +102,11 @@ def get_feedback(request, uname):
         except models.User.DoesNotExist:
             result = {'error': 'username does not exist'}
             return JsonResponse(result)
-        mbunge = models.Mbunge.objects.get(user=user)
-        jimbo = mbunge.jimbo_id
-        maoni = models.Maoni.objects.filter(jimbo=jimbo)
+        mbunge = models.RC.objects.get(user=user)
+        jimbo = mbunge.region
+        majimbo = models.Jimbo.objects.filter(mkoa=jimbo).values('id')
+        print(majimbo)
+        maoni = models.Maoni.objects.filter(jimbo_id__in=majimbo)# you can also use Subquery()
         serializer = serializers.MaoniSerializer(maoni, many=True)
         return JsonResponse(serializer.data, safe=False)
     else:
@@ -132,7 +134,8 @@ def get_regions(request):
 
 
 class CreateRegionCommissioner(APIView):
-    # permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated,)
+
     # def get(self, request):
     #     pass
 
@@ -149,3 +152,12 @@ class CreateRegionCommissioner(APIView):
             }
             return Response(content, status=status.HTTP_201_CREATED)
         return Response(rc_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class MajimboListAPIView(ListAPIView):
+    queryset = models.Jimbo.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        queryset = list(self.queryset.filter(mkoa=self.kwargs.get('mkoa')).values('id','jina_la_jimbo'))
+        # serializer = serializers.JimboSerializer(queryset, many=True)
+        # majimbo = utils.get_majimbo(serializer.data)
+        result = {'majimbo': queryset}
+        return Response(result)
