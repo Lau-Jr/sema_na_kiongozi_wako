@@ -148,7 +148,8 @@ class CreateRegionCommissioner(APIView):
             uid = models.User.objects.get(username=data['username'])
             generated_token = Token.objects.get(user_id=uid)
             content = {
-                'generated_token': generated_token.key
+                'generated_token': generated_token.key,
+                'role': 'admin' if uid.is_admin else 'rc'
             }
             return Response(content, status=status.HTTP_201_CREATED)
         return Response(rc_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
