@@ -106,7 +106,7 @@ def get_feedback(request, uname):
         jimbo = mbunge.region
         majimbo = models.Jimbo.objects.filter(mkoa=jimbo).values('id')
         print(majimbo)
-        maoni = models.Maoni.objects.filter(jimbo_id__in=majimbo)# you can also use Subquery()
+        maoni = models.Maoni.objects.filter(jimbo_id__in=majimbo)  # you can also use Subquery()
         serializer = serializers.MaoniSerializer(maoni, many=True)
         return JsonResponse(serializer.data, safe=False)
     else:
@@ -152,12 +152,24 @@ class CreateRegionCommissioner(APIView):
             }
             return Response(content, status=status.HTTP_201_CREATED)
         return Response(rc_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class MajimboListAPIView(ListAPIView):
     queryset = models.Jimbo.objects.all()
 
     def get(self, request, *args, **kwargs):
-        queryset = list(self.queryset.filter(mkoa=self.kwargs.get('mkoa')).values('id','jina_la_jimbo'))
+        queryset = list(self.queryset.filter(mkoa=self.kwargs.get('mkoa')).values('id', 'jina_la_jimbo'))
         # serializer = serializers.JimboSerializer(queryset, many=True)
         # majimbo = utils.get_majimbo(serializer.data)
         result = {'majimbo': queryset}
         return Response(result)
+
+
+@api_view(['GET'])
+def get_sectors(request):
+    if request.method == 'GET':
+        sectors = models.Sekta.objects.values('id', 'jina')
+        result = {'regions': sectors}
+        return Response(result)
+    else:
+        pass

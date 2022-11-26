@@ -8,6 +8,7 @@ urlpatterns = [
     path('majimbo/<mkoa>/', views.JimboListAPIView.as_view(), name='majimbo-list'),
     path('provincies/<mkoa>/', views.MajimboListAPIView.as_view(), name='majimbo-list'),
     path('regions/', views.get_regions, name='region-list'),
+    path('sectors/', views.get_sectors, name='sector-list'),
     path('check-mkoa/<mkoa>/', views.CheckMkoaAPIView.as_view(), name='check-mkoa'),
     path('getfeedback/<uname>/', views.get_feedback, name='get-feedback'),
     path('check-sekta/<jina>/', views.CheckSektaAPIView.as_view(), name='check-sekta'),
