@@ -20,6 +20,8 @@ from mpis_backend.views import HomeView
 from mpis_backend.views import LoginView, LogoutView
 from rest_framework.authtoken.views import obtain_auth_token
 from mpis_backend.api.views import CustomAuthToken
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 
 urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
@@ -31,5 +33,5 @@ urlpatterns = [
     path('login/', LoginView.as_view(), name='login'),
     path('', HomeView.as_view(), name='home'),
     path('logout/', LogoutView.as_view(), name='logout'),
-    path('api-token-auth/', CustomAuthToken, name='api_token_auth'),
+    path('api-token-auth/', csrf_exempt(CustomAuthToken.as_view()), name='api_token_auth'),
 ]
