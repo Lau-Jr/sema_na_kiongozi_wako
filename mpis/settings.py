@@ -49,11 +49,13 @@ INSTALLED_APPS = [
     # third part apps
     'rest_framework',
     'crispy_forms',
+    'corsheaders', 
     'rest_framework.authtoken',
 
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -64,6 +66,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+CORS_ORIGIN_ALLOW_ALL = True
 ROOT_URLCONF = 'mpis.urls'
 
 TEMPLATES = [
