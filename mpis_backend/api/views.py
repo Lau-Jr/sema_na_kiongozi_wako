@@ -158,21 +158,28 @@ class CreateRegionCommissioner(APIView):
 
 
 class MajimboListAPIView(ListAPIView):
+    permission_classes = (IsAuthenticated,)
     queryset = models.Jimbo.objects.all()
 
     def get(self, request, *args, **kwargs):
-        queryset = list(self.queryset.filter(mkoa=self.kwargs.get('mkoa')).values('id', 'jina_la_jimbo'))
-        # serializer = serializers.JimboSerializer(queryset, many=True)
-        # majimbo = utils.get_majimbo(serializer.data)
-        result = {'majimbo': queryset}
-        return Response(result)
+        if not request.user.is_admin:
+            rc = models.RC.objects.get(user__username=request.user.username)
+            print(rc.region)
+            queryset = list(self.queryset.filter(mkoa=rc.region).values('id', 'jina_la_jimbo'))
+            # serializer = serializers.JimboSerializer(queryset, many=True)
+            # majimbo = utils.get_majimbo(serializer.data)
+            result = {'majimbo': queryset}
+            return Response(result)
+        else:
+            result = {'result': 'user is not RC'}
+            return Response(result)
 
 
 @api_view(['GET'])
 def get_sectors(request):
     if request.method == 'GET':
         sectors = models.Sekta.objects.values('id', 'jina')
-        result = {'regions': sectors}
+        result = {'sectors': sectors}
         return Response(result)
     else:
         pass
@@ -185,8 +192,73 @@ class CustomAuthToken(ObtainAuthToken):
                                            context={'request': request})
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
+        rc = models.RC.objects.get(user__username=request.user.username)
         token, created = Token.objects.get_or_create(user=user)
         return Response({
             'token': token.key,
-            'role': 'admin' if user.is_admin else 'rc'
+            'role': 'admin' if user.is_admin else 'rc',
+            'region': rc.region
         })
+
+
+class ReportListAPIView(ListAPIView):
+    permission_classes = (IsAuthenticated,)
+    # queryset = models.Jimbo.objects.all()
+    maoni = None
+
+    def get(self, request, *args, **kwargs):
+        # print(request.method)
+        try:
+            user = models.User.objects.get(username=request.user.username)
+        except models.User.DoesNotExist:
+            result = {'error': 'username does not exist'}
+            return Response(result)
+        if not request.user.is_admin:
+            mbunge = models.RC.objects.get(user=user)
+            jimbo = mbunge.region
+            majimbo = models.Jimbo.objects.filter(mkoa=jimbo).values('id')
+            print(majimbo)
+            maoni = models.Maoni.objects.filter(jimbo_id__in=majimbo)  # you can also use Subquery()
+            return Response(self.get_summary_report(maoni))
+            # serializer = serializers.MaoniSerializer(maoni, many=True)
+            # return JsonResponse(serializer.data, safe=False)
+        else:
+            result = {'error': 'user is not RC'}
+            return Response(result)
+
+    def get_summary_report(self, maoni):
+        response = dict()
+        if maoni:
+            for oni in maoni:
+                category = self.get_category(oni)
+                jimbo = oni.jimbo.jina_la_jimbo
+                sekta = oni.sekta.jina
+                if jimbo in response:
+                    if sekta in response[jimbo]:
+                        if category in response[jimbo][sekta]:
+                            response[jimbo][sekta][category] += 1
+                        else:
+                            response[jimbo][sekta][category] = 1
+                    else:
+                        cat1 = dict()
+                        cat1[category] = 1
+                        response[jimbo][sekta] = cat1
+                else:
+                    cat_2 = dict()
+                    cat_2[category] = 1
+                    sekta_1 = dict()
+                    sekta_1[sekta] = cat_2
+                    response[jimbo] = sekta_1
+            print(response)
+            return response
+        else:
+            print('Hakuna maoni')
+            return {'response': 'no suggestions for this user'}
+
+    def get_category(self, oni):
+        if int(oni.category) == 1:
+            return 'Pongezi'
+        elif int(oni.category) == 2:
+            return 'Kosoa'
+        else:
+            return 'Maoni'
