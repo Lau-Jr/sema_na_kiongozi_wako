@@ -192,13 +192,21 @@ class CustomAuthToken(ObtainAuthToken):
                                            context={'request': request})
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
-        rc = models.RC.objects.get(user__username=request.user.username)
-        token, created = Token.objects.get_or_create(user=user)
-        return Response({
-            'token': token.key,
-            'role': 'admin' if user.is_admin else 'rc',
-            'region': rc.region
-        })
+        if not user.is_admin:
+            rc = models.RC.objects.get(user__username=user.username)
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({
+                'token': token.key,
+                'role': 'rc',
+                'region': rc.region
+            })
+        else:
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({
+                'token': token.key,
+                'role': 'admin'
+            })
+
 
 
 class ReportListAPIView(ListAPIView):
